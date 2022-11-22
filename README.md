@@ -81,6 +81,7 @@ Server: Docker Engine - Community
     cp -a packaging/systemd/* /etc/systemd/system
     sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
     systemctl daemon-reload
+    systemctl start cri-docker.service
     systemctl enable cri-docker.service
     systemctl enable --now cri-docker.socket
     ```
@@ -144,7 +145,7 @@ commit: fe869b5d4da11ba318eb84a3ac00f336411de7ba
 ### 5- Start minikube
 **Steps :**
 ```sh
-root@minikube: minikube start --driver=docker --container-runtime=containerd --force
+root@minikube: minikube start --driver=docker --container-runtime=containerd --cpus 4 --memory 8192 --force
 😄  minikube v1.27.1 on Ubuntu 22.04 (amd64)
 ❗  minikube skips various validations when --force is supplied; this may lead to unexpected behavior
 ✨  Using the docker driver based on existing profile
@@ -161,7 +162,13 @@ root@minikube: minikube start --driver=docker --container-runtime=containerd --f
     ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
 🌟  Enabled addons: storage-provisioner, default-storageclass
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by defaul
+``` 
+_* In case of failure please run the following command :_
 ```
+minikube delete
+sudo sysctl fs.protected_regular=0
+```
+_* PS :  Minikube will be deleted automatically after every VM shutdown_
 
 **Verification:**
 ```sh
